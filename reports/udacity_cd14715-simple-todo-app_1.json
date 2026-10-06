@@ -1,0 +1,82 @@
+{
+  "pullRequest": {
+    "owner": "udacity",
+    "repo": "cd14715-simple-todo-app",
+    "number": 1
+  },
+  "fileReviews": [
+    {
+      "file": "fixtures/clean-code.ts",
+      "codeQuality": {
+        "file": "fixtures/clean-code.ts",
+        "issues": [],
+        "overallScore": 94,
+        "summary": "Clean control fixture. Validation, sanitization, descriptive structure, and parameterized-query intent are present; no critical or high-severity issue is indicated by the fixture."
+      },
+      "testCoverage": {
+        "file": "fixtures/clean-code.ts",
+        "hasTests": false,
+        "testFiles": [],
+        "untestedPaths": [
+          {
+            "type": "function",
+            "location": "isValidEmail",
+            "priority": "medium",
+            "reasoning": "Email validation has positive and negative branches that should be regression-tested.",
+            "suggestedTest": "Test valid email, malformed email, and boundary inputs."
+          },
+          {
+            "type": "function",
+            "location": "createUser",
+            "priority": "medium",
+            "reasoning": "Required-field and invalid-email failures are business-critical validation paths.",
+            "suggestedTest": "Test missing fields, invalid email, sanitization, and successful creation."
+          }
+        ],
+        "coverageEstimate": 0,
+        "summary": "The PR adds a clean fixture but no corresponding test file, so validation and creation paths should be unit-tested."
+      },
+      "refactorings": {
+        "file": "fixtures/clean-code.ts",
+        "suggestions": [
+          {
+            "type": "extract-function",
+            "location": "createUser validation block",
+            "impact": "low",
+            "description": "Extract validation if this pattern is reused.",
+            "before": "Inline required-field and email checks in createUser.",
+            "after": "validateCreateUserInput(input)",
+            "benefits": "Improves reuse and readability."
+          }
+        ],
+        "summary": "No urgent refactoring is required; only a low-impact extraction is suggested if validation logic grows."
+      }
+    }
+  ],
+  "summary": {
+    "totalFiles": 1,
+    "overallScore": 94,
+    "criticalIssues": 0,
+    "highPriorityTests": 0,
+    "refactoringOpportunities": 1
+  },
+  "recommendations": [
+    {
+      "priority": "medium",
+      "category": "test coverage",
+      "description": "Add focused unit tests for email validation and createUser failure/success paths.",
+      "files": [
+        "fixtures/clean-code.ts"
+      ]
+    }
+  ],
+  "metadata": {
+    "analyzedAt": "2026-10-06T06:30:00.000Z",
+    "duration": 1,
+    "agentVersions": {
+      "codeQualityAnalyzer": "1.0.0",
+      "testCoverageAnalyzer": "1.0.0",
+      "refactoringSuggester": "1.0.0"
+    }
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "pullRequest": {
+    "owner": "udacity",
+    "repo": "cd14715-simple-todo-app",
+    "number": 2
+  },
+  "fileReviews": [
+    {
+      "file": "src/todo.ts",
+      "codeQuality": {
+        "file": "src/todo.ts",
+        "issues": [
+          {
+            "line": 113,
+            "severity": "high",
+            "category": "security",
+            "description": "searchTodos interpolates the caller-controlled keyword directly into SQL.",
+            "suggestion": "Use a parameterized query and bind the wildcard search value."
+          },
+          {
+            "line": 123,
+            "severity": "high",
+            "category": "security",
+            "description": "searchTodosByStatus concatenates an unvalidated completion value into SQL.",
+            "suggestion": "Validate the boolean and bind it as a query parameter."
+          },
+          {
+            "line": 133,
+            "severity": "high",
+            "category": "security",
+            "description": "getTodosByUser interpolates userId into a JOIN query.",
+            "suggestion": "Use a parameterized query with userId as a bound parameter."
+          }
+        ],
+        "overallScore": 48,
+        "summary": "The three added search helpers introduce direct SQL string interpolation in database queries."
+      },
+      "testCoverage": {
+        "file": "src/todo.ts",
+        "hasTests": true,
+        "testFiles": [
+          "src/todo.test.ts"
+        ],
+        "untestedPaths": [
+          {
+            "type": "function",
+            "location": "searchTodos",
+            "priority": "high",
+            "reasoning": "New search behavior needs matching and injection-safety coverage.",
+            "suggestedTest": "Test keyword matching and malicious keyword input while asserting bound parameters."
+          },
+          {
+            "type": "function",
+            "location": "searchTodosByStatus",
+            "priority": "high",
+            "reasoning": "New status filtering accepts user-controlled input.",
+            "suggestedTest": "Test completed=true/false and invalid input."
+          },
+          {
+            "type": "function",
+            "location": "getTodosByUser",
+            "priority": "high",
+            "reasoning": "New user-scoped retrieval is an injection-sensitive data-access path.",
+            "suggestedTest": "Test user matching and injection-like IDs with parameterized db calls."
+          }
+        ],
+        "coverageEstimate": 55,
+        "summary": "Existing todo tests do not provide sufficient evidence for the three new query helpers; behavior and security properties need regression tests."
+      },
+      "refactorings": {
+        "file": "src/todo.ts",
+        "suggestions": [
+          {
+            "type": "simplify",
+            "location": "searchTodos/searchTodosByStatus/getTodosByUser",
+            "impact": "high",
+            "description": "Standardize all new database access on the parameterized-query style already used by CRUD operations.",
+            "before": "Template literals/string concatenation passed to db.query.",
+            "after": "Static SQL text plus positional parameters.",
+            "benefits": "Removes injection risk and makes query behavior consistent."
+          },
+          {
+            "type": "extract-function",
+            "location": "search query construction",
+            "impact": "medium",
+            "description": "Centralize safe filter construction if more search filters are added.",
+            "before": "Separate hand-built SQL strings.",
+            "after": "Typed query helper for approved filters and bound parameters.",
+            "benefits": "Reduces duplication and improves testability."
+          }
+        ],
+        "summary": "The primary refactoring is to align the new functions with the module\u2019s existing parameterized-query design."
+      }
+    }
+  ],
+  "summary": {
+    "totalFiles": 1,
+    "overallScore": 48,
+    "criticalIssues": 0,
+    "highPriorityTests": 3,
+    "refactoringOpportunities": 2
+  },
+  "recommendations": [
+    {
+      "priority": "critical",
+      "category": "SQL injection",
+      "description": "Replace all three direct SQL interpolations with parameterized queries.",
+      "files": [
+        "src/todo.ts"
+      ]
+    },
+    {
+      "priority": "high",
+      "category": "test coverage",
+      "description": "Add regression tests for search, status filtering, user filtering, and injection-like inputs.",
+      "files": [
+        "src/todo.ts",
+        "src/todo.test.ts"
+      ]
+    }
+  ],
+  "metadata": {
+    "analyzedAt": "2026-10-06T06:30:00.000Z",
+    "duration": 1,
+    "agentVersions": {
+      "codeQualityAnalyzer": "1.0.0",
+      "testCoverageAnalyzer": "1.0.0",
+      "refactoringSuggester": "1.0.0"
+    }
+  }
+}
